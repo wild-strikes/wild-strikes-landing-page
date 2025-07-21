@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import "./styles/navbar.css";
 import "./styles/home.css";
 import "./styles/stars.css";
@@ -44,13 +45,15 @@ export default function Home() {
             <br />
             <span className="highlight">Wildest Strikes</span> survive
           </p>
-          <Image
-            src="/assets/Website-page/play-btn.png"
-            alt="Play Button"
-            width={200}
-            height={80}
-            className="play-button"
-          />
+          <Link href="/coming-soon">
+            <Image
+              src="/assets/Website-page/play-btn.png"
+              alt="Play Button"
+              width={200}
+              height={80}
+              className="play-button"
+            />
+          </Link>
         </div>
       </div>
 
