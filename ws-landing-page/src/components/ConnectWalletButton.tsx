@@ -88,76 +88,81 @@ export default function ConnectWalletButton() {
             </div>
 
             <div style={modalBodyStyle}>
-              <style>
-                {`
-                  .wallet-section {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    gap: 16px;
-                    width: 100%;
-                  }
+			<style>
+			{`
+				.wallet-section {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 16px;
+				width: 100%;
+				}
 
-                  .section-title {
-                    font-size: 2rem;
-                    font-weight: 700;
-                    margin-bottom: 8px;
-                    width: 340px;
-                    text-align: center;
-                    color: black;
-                  }
+				.section-title {
+				font-size: 2rem;
+				font-weight: 700;
+				margin-bottom: 8px;
+				width: 340px;
+				text-align: center;
+				color: black;
+				}
 
-                  .section-subtitle {
-                    font-size: 1rem;
-                    font-weight: 600;
-                    margin: 12px 0 4px 0;
-                    width: 340px;
-                    text-align: left;
-                    color: black;
-                  }
+				.section-subtitle {
+				font-size: 1rem;
+				font-weight: 600;
+				margin: 12px 0 4px 0;
+				width: 340px;
+				text-align: left;
+				color: black;
+				}
 
-                  .wallet-btn {
-                    display: flex;
-                    align-items: center;
-                    justify-content: flex-start;
-                    gap: 12px;
-                    width: 340px;
-                    padding: 14px 18px;
-                    background: #edd8b4;
-                    color: black;
-                    border: none;
-                    border-radius: 1px;
-                    font-size: 1rem;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: background 0.2s ease, transform 0.1s ease;
-                  }
+				.wallet-btn {
+				display: flex;
+				align-items: center;
+				justify-content: flex-start;
+				gap: 12px;
+				width: 340px;
+				padding: 14px 18px;
+				background: #edd8b4;
+				color: black;
+				border: none;
+				border-radius: 5px;
+				font-size: 1rem;
+				font-weight: 600;
+				cursor: pointer;
+				transition: background 0.2s ease, transform 0.1s ease;
+				}
 
-                  .wallet-btn img {
-                    width: 22px;
-                    height: 22px;
-                  }
+				/* ✅ Only Petra, Google, Apple buttons get shadow */
+				.wallet-btn.shadow {
+				box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+				}
 
-                  .wallet-btn:hover {
-                    background: #e2cfa8;
-                  }
+				.wallet-btn img {
+				width: 22px;
+				height: 22px;
+				}
 
-                  .wallet-btn:active {
-                    transform: scale(0.98);
-                  }
+				.wallet-btn:hover {
+				background: #e2cfa8;
+				}
 
-                  .wallet-btn:disabled {
-                    opacity: 0.6;
-                    cursor: not-allowed;
-                  }
-                `}
-              </style>
+				.wallet-btn:active {
+				transform: scale(0.98);
+				}
+
+				.wallet-btn:disabled {
+				opacity: 0.6;
+				cursor: not-allowed;
+				}
+			`}
+			</style>
 
               <div className="wallet-section">
                 <h3 className="section-title">Connect Wallet</h3>
 
                 <button
-                  className="wallet-btn"
+                  className="wallet-btn shadow"
                   disabled={isLoading}
                   onClick={() => handleConnect("petra")}
                 >
@@ -171,7 +176,7 @@ export default function ConnectWalletButton() {
                 <h4 className="section-subtitle">Social</h4>
 
                 <button
-                  className="wallet-btn"
+                  className="wallet-btn shadow"
                   disabled={isLoading}
                   onClick={() => handleConnect("google")}
                 >
@@ -183,7 +188,7 @@ export default function ConnectWalletButton() {
                 </button>
 
                 <button
-                  className="wallet-btn"
+                  className="wallet-btn shadow"
                   disabled={isLoading}
                   onClick={() => handleConnect("apple")}
                 >
