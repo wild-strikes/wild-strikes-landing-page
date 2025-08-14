@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { subscribeNewsletter } from '@/lib/api';
 
 export function useEmailWhitelist() {
   const [email, setEmail] = useState('');
@@ -8,59 +9,63 @@ export function useEmailWhitelist() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [showButton, setShowButton] = useState(false);
 
-  const isValidEmail = (email: string): boolean => {
+  const isValidEmail = (value: string): boolean => {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
+    return re.test(String(value).toLowerCase());
   };
 
-  const handleSubmit = () => {
-    console.log('Submit clicked with email:', email); // Debug log
-    const trimmedEmail = email.trim();
-    
-    if (isValidEmail(trimmedEmail)) {
-      // Here you would normally send the email to your server
+  const resetAfterDelay = () => {
+    setTimeout(() => {
+      setEmail('');
       setError('');
-      setIsSuccess(true);
-      console.log('Email is valid, showing success message'); // Debug log
-      
-      // Reset after 3 seconds
-      setTimeout(() => {
-        setEmail('');
-        setError('');
-        setIsSuccess(false);
-        setShowButton(false);
-      }, 3000);
-    } else {
+      setIsSuccess(false);
+      setShowButton(false);
+    }, 3000);
+  };
+
+  const handleSubmit = async () => {
+    const trimmedEmail = email.trim();
+    if (!isValidEmail(trimmedEmail)) {
       setError('Please enter a valid email address');
       setIsSuccess(false);
-      console.log('Email is invalid'); // Debug log
+      return;
+    }
+
+    try {
+      const result = await subscribeNewsletter(trimmedEmail);
+      setError('');
+      setIsSuccess(true);
+      if (result?.alreadySubscribed) {
+        // Optionally change message/UI for already subscribed
+        // e.g., setInfo('You are already subscribed');
+      }
+      resetAfterDelay();
+    } catch (e: any) {
+      setIsSuccess(false);
+      setError(e?.message || 'Subscription failed, please try again');
     }
   };
 
   const handleEmailChange = (value: string) => {
     setEmail(value);
-    console.log('Email value:', value); // Debug log
-    
+
     if (value.trim() === '') {
       setShowButton(false);
       setError('');
+      return;
+    }
+
+    setShowButton(true);
+    if (isValidEmail(value)) {
+      setError('');
     } else {
-      setShowButton(true);
-      console.log('Submit button should be visible'); // Debug log
-      
-      if (isValidEmail(value)) {
-        setError('');
-        console.log('Email is valid - button green'); // Debug log
-      } else {
-        setError('Please enter a valid email address');
-        console.log('Email is invalid - button red'); // Debug log
-      }
+      setError('Please enter a valid email address');
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      handleSubmit();
+      void handleSubmit();
     }
   };
 

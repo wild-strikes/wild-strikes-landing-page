@@ -1,7 +1,8 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useWallet, groupAndSortWallets } from "@aptos-labs/wallet-adapter-react";
+import { whitelistOptIn } from "@/lib/api";
 
 const BASE = "/assets/Website-page/whitelist/Connect Wallet";
 const path = (file: string) => encodeURI(`${BASE}/${file}`);
@@ -16,6 +17,8 @@ const ASSETS = {
 export default function ConnectWalletButton() {
   const { connect, disconnect, account, connected, wallets = [], isLoading } = useWallet();
   const [open, setOpen] = useState(false);
+  const hasWhitelistedRef = useRef(false);
+
   // Get full grouped lists (OLD logic brought in)
   const { aptosConnectWallets, availableWallets = [], installableWallets = [] } = groupAndSortWallets(wallets);
 
@@ -68,6 +71,34 @@ export default function ConnectWalletButton() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
+
+  useEffect(() => {
+    const run = async () => {
+      if (!connected || !account || hasWhitelistedRef.current) return;
+      const addr = (account.address?.toString?.() ?? "").toString();
+      if (!addr) return;
+      const message = `Wild Strikes Whitelist Opt-in\nAddress: ${addr}\nTS: ${Date.now()}`;
+      let signature: string | undefined;
+      try {
+        // @ts-ignore
+        if (typeof (window as any).aptos?.signMessage === "function") {
+          // @ts-ignore
+          const sigRes = await (window as any).aptos.signMessage({ message, nonce: `${Date.now()}` });
+          signature = sigRes?.signature || sigRes?.signatureHex || undefined;
+        }
+      } catch (e) {
+        console.warn("Message signing skipped:", e);
+      }
+      try {
+        await whitelistOptIn({ walletAddress: addr, message, signature });
+        hasWhitelistedRef.current = true;
+        console.log("Whitelisted successfully (effect)");
+      } catch (e) {
+        console.error("Whitelist API failed (effect):", e);
+      }
+    };
+    run();
+  }, [connected, account]);
 
   if (connected && account) {
     return (
