@@ -1,0 +1,20 @@
+/* eslint-disable prettier/prettier */
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { WhitelistModule } from './whitelist/whitelist.module';
+import { NewsletterModule } from './newsletter/newsletter.module';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    WhitelistModule,
+    NewsletterModule,
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
